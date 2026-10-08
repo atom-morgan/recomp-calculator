@@ -1,0 +1,24 @@
+:host { display: block; }
+main { max-width: 560px; margin: 0 auto; padding: 40px 20px 80px; }
+h1 {
+  font-size: clamp(2.2rem, 9vw, 3.4rem); font-weight: 850; font-stretch: 80%;
+  line-height: 1; letter-spacing: -0.01em; margin: 0 0 14px;
+}
+header p { color: var(--steel); margin: 0 0 32px; max-width: 46ch; }
+form > * { margin-bottom: 20px; }
+.row { display: flex; gap: 14px; }
+.field { display: block; flex: 1; }
+input, select {
+  width: 100%; font: inherit; font-weight: 600; padding: 13px 14px;
+  border: 2px solid var(--line); border-radius: 4px; background: var(--white); color: var(--ink);
+}
+input[aria-invalid='true'] { border-color: var(--error); }
+input[type='number'] { appearance: textfield; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+input:focus-visible, select:focus-visible, .primary:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+.err { color: var(--error); font-weight: 600; margin-top: -8px; }
+.primary {
+  width: 100%; font: inherit; font-weight: 800; font-stretch: 90%; font-size: 1.1rem;
+  padding: 16px; border: 0; border-radius: 4px; background: var(--cobalt); color: var(--white); cursor: pointer;
+}
+.primary:hover { background: #0f2fd0; }

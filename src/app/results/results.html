@@ -1,0 +1,42 @@
+<section aria-live="polite">
+  <p class="lbl">Your maintenance calories</p>
+  <p class="big">{{ result().tdee | number }}<small> kcal/day</small></p>
+
+  <div class="tabs" role="tablist" aria-label="Goal">
+    @for (target of result().targets; track target.id) {
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="target.id === active().id"
+        (click)="goal.set(target.id)"
+      >
+        {{ target.label }}
+      </button>
+    }
+  </div>
+
+  <div class="panel" role="tabpanel">
+    <div class="pair">
+      <div>
+        <p class="num">{{ active().calories | number }}</p>
+        <p class="lbl">kcal per day</p>
+      </div>
+      <div>
+        <p class="num">{{ active().protein }}g</p>
+        <p class="lbl">protein per day</p>
+      </div>
+    </div>
+    <p class="blurb">{{ active().blurb }}</p>
+  </div>
+
+  <p class="note">
+    These are estimates. Track your weight and waist for 2 to 3 weeks, then adjust by 100 to 150
+    calories if nothing moves.
+  </p>
+
+  <div class="cta">
+    <h2>Want a plan built around these numbers?</h2>
+    <p>I'll set your training, calories and weekly check-ins so you actually build the lean look.</p>
+    <a [href]="ctaUrl">Book a free call</a>
+  </div>
+</section>

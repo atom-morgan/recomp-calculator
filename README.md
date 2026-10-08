@@ -1,59 +1,35 @@
-# RecompCalculator
+# Recomp calorie calculator
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.2.
+A one-page calculator for people who are "skinny fat". It estimates maintenance calories (TDEE) and
+gives three targets: standard recomp, fat loss focus and muscle focus, each with a daily protein goal.
 
-## Development server
+Built with Angular (standalone components, signals, reactive forms).
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Run it
 
 ```bash
-ng generate component component-name
+npm install
+npm start        # http://localhost:4200
+npm test         # unit tests
+npm run build    # production build in dist/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## How it works
 
-```bash
-ng generate --help
+- **BMR:** Katch-McArdle, `370 + 21.6 × lean mass (kg)`.
+- **TDEE:** BMR × a step-count multiplier, plus about 300 kcal per training hour (spread over the week).
+- **Targets:** recomp −10%, fat loss −20% (−15% for 60+), muscle focus +5%, with a calorie floor.
+- **Protein:** 2.4 to 2.8 g per kg of lean mass depending on the goal, plus 0.3 for 60+.
+
+These are estimates. The calculator tells users to track their results and adjust.
+
+## Structure
+
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
+src/app/
+  tdee.ts                  pure calculation logic (+ tdee.spec.ts)
+  calculator/              container: reactive form, validation, submit
+  results/                 presentational: numbers, goal tabs, call to action
+  ui/segmented-control/    reusable ControlValueAccessor built on native radios
+  config.ts                call-to-action link
 ```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

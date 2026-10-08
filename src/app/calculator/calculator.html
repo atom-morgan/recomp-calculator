@@ -1,0 +1,68 @@
+<main>
+  <header>
+    <h1>Skinny fat? Find your recomp calories.</h1>
+    <p>
+      Answer six quick questions to get your maintenance calories and three targets to build muscle
+      and lose fat.
+    </p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <app-segmented-control label="Units" formControlName="units" [options]="unitOptions" />
+    <app-segmented-control label="Sex" formControlName="sex" [options]="sexOptions" />
+
+    @let weight = form.controls.weight;
+    @let bodyFat = form.controls.bodyFat;
+    <div class="row">
+      <label class="field">
+        <span class="lbl">Weight ({{ units() === 'imperial' ? 'lb' : 'kg' }})</span>
+        <input
+          type="number" inputmode="decimal" step="any" formControlName="weight"
+          [placeholder]="units() === 'imperial' ? '175' : '80'"
+          [attr.aria-invalid]="weight.touched && weight.invalid"
+        />
+      </label>
+      <label class="field">
+        <span class="lbl">Body fat (%)</span>
+        <input
+          type="number" inputmode="decimal" step="any" formControlName="bodyFat" placeholder="25"
+          [attr.aria-invalid]="bodyFat.touched && bodyFat.invalid"
+        />
+      </label>
+    </div>
+    @if (weight.touched && weight.invalid) {
+      <p class="err" role="alert">Enter your current weight.</p>
+    }
+    @if (bodyFat.touched && bodyFat.invalid) {
+      <p class="err" role="alert">
+        Enter a body fat percentage between 5 and 60. A best guess is fine.
+      </p>
+    }
+
+    <label class="field">
+      <span class="lbl">Steps per day</span>
+      <select formControlName="stepIdx">
+        @for (option of stepOptions; track option.label; let i = $index) {
+          <option [ngValue]="i">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="lbl">Training per week</span>
+      <select formControlName="hourIdx">
+        @for (option of hourOptions; track option.label; let i = $index) {
+          <option [ngValue]="i">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    <app-segmented-control label="Age" formControlName="senior" [options]="ageOptions" />
+
+    <button class="primary" type="submit">Calculate my calories</button>
+  </form>
+
+  @if (submitted(); as inputs) {
+    <app-results [inputs]="inputs" />
+  }
+</main>
