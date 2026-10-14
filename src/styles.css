@@ -11,3 +11,5 @@ body {
 }
 /* Small field label, shared across components */
 .lbl { display: block; margin: 0 0 6px; font-size: 0.85rem; font-weight: 600; color: var(--steel); }
+/* Label with an info tip; also the anchor the tooltip bubble positions against */
+.label-row { position: relative; display: flex; align-items: center; gap: 6px; }

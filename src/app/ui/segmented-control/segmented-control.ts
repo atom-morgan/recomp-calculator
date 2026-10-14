@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { InfoTip } from '../info-tip/info-tip';
 
 export interface SegmentOption<T> {
   readonly value: T;
@@ -9,11 +10,13 @@ export interface SegmentOption<T> {
 let nextId = 0;
 
 /**
- * A radio group styled as a segmented control. Works with reactive forms
- * (formControlName / formControl) and uses native radios for keyboard support.
+ * A radio group styled as a segmented control, with an optional info tip on the label.
+ * Works with reactive forms (formControlName / formControl) and uses native radios
+ * for keyboard support.
  */
 @Component({
   selector: 'app-segmented-control',
+  imports: [InfoTip],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './segmented-control.css',
   providers: [
@@ -21,7 +24,14 @@ let nextId = 0;
   ],
   template: `
     <fieldset [disabled]="disabled()">
-      <legend class="lbl">{{ label() }}</legend>
+      <legend class="lbl">
+        <span class="label-row">
+          {{ label() }}
+          @if (hint(); as text) {
+            <app-info-tip [text]="text" />
+          }
+        </span>
+      </legend>
       <div class="seg">
         @for (option of options(); track option.label) {
           <label [class.on]="option.value === value()">
@@ -41,6 +51,7 @@ let nextId = 0;
 })
 export class SegmentedControl<T> implements ControlValueAccessor {
   readonly label = input.required<string>();
+  readonly hint = input<string>();
   readonly options = input.required<readonly SegmentOption<T>[]>();
 
   protected readonly name = `segmented-${nextId++}`;

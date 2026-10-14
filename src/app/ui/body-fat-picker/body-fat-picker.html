@@ -1,0 +1,37 @@
+<div class="top">
+  <span class="lbl label-row">
+    Body fat
+    <app-info-tip [text]="hint" />
+  </span>
+  <output class="value">{{ value() }}%</output>
+</div>
+
+<div class="photos" role="group" aria-label="Examples. Tap one to set your body fat.">
+  @for (stop of stops(); track stop.id) {
+    <button
+      type="button"
+      class="photo"
+      tabindex="-1"
+      [class.on]="stop === nearest()"
+      [disabled]="disabled()"
+      [attr.aria-label]="'Set body fat to ' + stop.range"
+      (click)="set(stop.value)"
+    >
+      <img [src]="photoSrc(stop)" alt="" loading="lazy" />
+      <span class="range">{{ stop.range }}</span>
+    </button>
+  }
+</div>
+
+<input
+  type="range"
+  aria-label="Body fat percentage"
+  [min]="min()"
+  [max]="max()"
+  step="1"
+  [value]="value()"
+  [disabled]="disabled()"
+  [attr.aria-valuetext]="value() + ' percent'"
+  (input)="onSlide($event)"
+/>
+<p class="desc">{{ nearest().description }}</p>
