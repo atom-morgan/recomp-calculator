@@ -4,6 +4,23 @@
   line-height: 0.95; letter-spacing: -0.02em; margin: 0 0 28px;
 }
 .big small { font-size: 1.1rem; font-weight: 600; font-stretch: 100%; letter-spacing: 0; color: var(--steel); }
+.sub { margin: 0 0 12px; color: var(--steel); }
+.split { margin: 0 0 32px; }
+.bar { display: flex; gap: 2px; height: 14px; margin-bottom: 10px; }
+.bar span { flex-basis: 0; min-width: 4px; }
+.bmr { background: var(--ink); }
+.movement { background: var(--cobalt); }
+.training { background: var(--steel); }
+.legend { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.9rem; }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; }
+.legend b { font-weight: 700; }
+.caption, .offset { font-size: 0.85rem; color: var(--steel); margin: 0; }
+.offset { margin-top: 2px; font-weight: 600; }
+.how { margin-top: 28px; }
+.how h2 { font-size: 1.2rem; font-weight: 800; margin: 0 0 8px; }
+.how p, .how ul { margin: 0 0 10px; }
+.how ul { padding-left: 20px; }
+.how li { margin-bottom: 6px; }
 .tabs { display: flex; border-bottom: 2px solid var(--ink); }
 .tabs button {
   flex: 1; font: inherit; font-weight: 700; font-size: 0.95rem; padding: 12px 4px;

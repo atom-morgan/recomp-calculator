@@ -27,6 +27,32 @@ describe('calculate', () => {
     expect(fat.protein).toBe(185);
   });
 
+  it('splits maintenance into resting burn, daily movement and training', () => {
+    // BMR is about 1,656, movement 497 and training 150, which rounds to 2,310,
+    // so the extra 10 comes off the largest part
+    expect(calculate(base).breakdown).toEqual({ bmr: 1650, movement: 500, training: 150 });
+  });
+
+  it('keeps the breakdown adding up to the TDEE', () => {
+    for (const weight of [100, 143, 175, 212, 260]) {
+      for (const stepIdx of [0, 1, 2, 3]) {
+        for (const hourIdx of [0, 1, 2, 3, 4]) {
+          const { tdee, breakdown } = calculate({ ...base, weight, stepIdx, hourIdx });
+          expect(breakdown.bmr + breakdown.movement + breakdown.training).toBe(tdee);
+        }
+      }
+    }
+  });
+
+  it('has no training calories when there is no training', () => {
+    expect(calculate({ ...base, hourIdx: 0 }).breakdown.training).toBe(0);
+  });
+
+  it('reports the adjustment applied to each target', () => {
+    expect(calculate(base).targets.map((t) => t.adjust)).toEqual([-0.1, -0.2, 0.05]);
+    expect(target({ ...base, senior: true }, 'fat').adjust).toBe(-0.15);
+  });
+
   it('never goes below the calorie floor', () => {
     const small: Inputs = { ...base, sex: 'female', weight: 90, bodyFat: 20, stepIdx: 0, hourIdx: 0 };
     expect(target(small, 'fat').calories).toBe(1200);

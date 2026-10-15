@@ -18,10 +18,19 @@ export interface Target {
   blurb: string;
   calories: number;
   protein: number;
+  adjust: number; // the change from maintenance that was applied
+}
+
+// kcal per day; the three parts add up to the rounded TDEE
+export interface Breakdown {
+  bmr: number;
+  movement: number;
+  training: number;
 }
 
 export interface Result {
   tdee: number;
+  breakdown: Breakdown;
   targets: Target[];
 }
 
@@ -42,7 +51,7 @@ export const HOUR_OPTIONS = [
 
 // adjust is the change from maintenance (-0.1 means 10% under).
 // protein is grams per kg of lean mass.
-interface Goal {
+export interface Goal {
   id: GoalId;
   label: string;
   blurb: string;
@@ -51,7 +60,7 @@ interface Goal {
   protein: number;
 }
 
-const GOALS: Goal[] = [
+export const GOALS: readonly Goal[] = [
   {
     id: 'recomp', label: 'Standard recomp', adjust: -0.1, seniorAdjust: -0.1, protein: 2.6,
     blurb: 'A small deficit with high protein and hard training. Fat comes down while muscle builds.',
@@ -69,9 +78,23 @@ const GOALS: Goal[] = [
 const LB_TO_KG = 0.45359237;
 const KCAL_PER_TRAINING_HOUR = 300;
 const SENIOR_PROTEIN_BONUS = 0.3;
-const CALORIE_FLOOR: Record<Sex, number> = { male: 1500, female: 1200 };
+export const CALORIE_FLOOR: Record<Sex, number> = { male: 1500, female: 1200 };
 
 const roundTo = (n: number, step: number) => Math.round(n / step) * step;
+
+// Round each part to 10 kcal, then give any leftover to the largest part
+// so the bar always adds up to the TDEE we show.
+function splitTdee(tdee: number, parts: Breakdown): Breakdown {
+  const rounded = {
+    bmr: roundTo(parts.bmr, 10),
+    movement: roundTo(parts.movement, 10),
+    training: roundTo(parts.training, 10),
+  };
+  const keys = Object.keys(rounded) as (keyof Breakdown)[];
+  const largest = keys.reduce((a, b) => (rounded[b] > rounded[a] ? b : a));
+  rounded[largest] += tdee - keys.reduce((sum, k) => sum + rounded[k], 0);
+  return rounded;
+}
 
 export function calculate(input: Inputs): Result {
   const kg = input.units === 'imperial' ? input.weight * LB_TO_KG : input.weight;
@@ -79,9 +102,10 @@ export function calculate(input: Inputs): Result {
 
   // Katch-McArdle, so only lean mass matters
   const bmr = 370 + 21.6 * leanKg;
-  const tdee =
-    bmr * STEP_OPTIONS[input.stepIdx].factor +
-    (HOUR_OPTIONS[input.hourIdx].hours * KCAL_PER_TRAINING_HOUR) / 7;
+  const movement = bmr * (STEP_OPTIONS[input.stepIdx].factor - 1);
+  const training = (HOUR_OPTIONS[input.hourIdx].hours * KCAL_PER_TRAINING_HOUR) / 7;
+  const tdee = bmr + movement + training;
+  const shownTdee = roundTo(tdee, 10);
 
   const targets = GOALS.map((goal): Target => {
     const adjust = input.senior ? goal.seniorAdjust : goal.adjust;
@@ -92,8 +116,13 @@ export function calculate(input: Inputs): Result {
       blurb: goal.blurb,
       calories: Math.max(CALORIE_FLOOR[input.sex], roundTo(tdee * (1 + adjust), 10)),
       protein: roundTo(protein, 5),
+      adjust,
     };
   });
 
-  return { tdee: roundTo(tdee, 10), targets };
+  return {
+    tdee: shownTdee,
+    breakdown: splitTdee(shownTdee, { bmr, movement, training }),
+    targets,
+  };
 }

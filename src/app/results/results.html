@@ -1,6 +1,27 @@
 <section aria-live="polite">
-  <p class="lbl">Your maintenance calories</p>
+  <p class="lbl">Your maintenance calories (TDEE)</p>
+  <p class="sub">
+    This is roughly how many calories you burn in a day. Eat this much and your weight should stay
+    about the same.
+  </p>
   <p class="big">{{ result().tdee | number }}<small> kcal/day</small></p>
+
+  <div class="split">
+    <p class="lbl">Where your calories go</p>
+    <div class="bar" aria-hidden="true">
+      @for (part of parts(); track part.id) {
+        @if (part.kcal > 0) {
+          <span [class]="part.id" [style.flex-grow]="part.kcal"></span>
+        }
+      }
+    </div>
+    <ul class="legend">
+      @for (part of parts(); track part.id) {
+        <li><i [class]="part.id"></i>{{ part.label }} <b>{{ part.kcal | number }} kcal</b></li>
+      }
+    </ul>
+    <p class="caption">An estimate based on your lean mass, steps and workouts.</p>
+  </div>
 
   <div class="tabs" role="tablist" aria-label="Goal">
     @for (target of result().targets; track target.id) {
@@ -20,6 +41,7 @@
       <div>
         <p class="num">{{ active().calories | number }}</p>
         <p class="lbl">kcal per day</p>
+        <p class="offset">{{ offset() }}</p>
       </div>
       <div>
         <p class="num">{{ active().protein }}g</p>
@@ -27,6 +49,29 @@
       </div>
     </div>
     <p class="blurb">{{ active().blurb }}</p>
+  </div>
+
+  <div class="how">
+    <h2>How your targets are set</h2>
+    <p>Each target starts from your maintenance calories and moves up or down from there.</p>
+    <ul>
+      <li>
+        <b>Standard recomp:</b> about {{ recompPct }}% below maintenance. A small deficit, so fat
+        comes down while hard training keeps building muscle.
+      </li>
+      <li>
+        <b>Fat loss focus:</b> about {{ fatPct }}% below maintenance{{ fatSeniorNote }}. Faster
+        fat loss, with higher protein to protect your muscle.
+      </li>
+      <li>
+        <b>Muscle focus:</b> about {{ musclePct }}% above maintenance. A slight surplus to support
+        strength and size, with slower fat loss.
+      </li>
+    </ul>
+    <p>
+      Protein is based on your lean mass, not your total weight, and we never suggest fewer than
+      {{ floor.male | number }} calories a day for men or {{ floor.female | number }} for women.
+    </p>
   </div>
 
   <p class="note">
