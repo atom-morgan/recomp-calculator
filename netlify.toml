@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  # the Angular application builder puts the deployable site in browser/
+  publish = "dist/recomp-calculator/browser"
+
+[build.environment]
+  NODE_VERSION = "24"
