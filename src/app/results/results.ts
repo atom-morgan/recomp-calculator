@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
-import { CTA_URL } from '../config';
+import { CTA_URL, INSTAGRAM_HANDLE } from '../config';
 import { CALORIE_FLOOR, GOALS, GoalId, Inputs, calculate } from '../tdee';
 
 // -0.1 -> 10
@@ -18,6 +18,8 @@ export class Results {
   readonly inputs = input.required<Inputs>();
 
   protected readonly ctaUrl = CTA_URL;
+  protected readonly instagramHandle = INSTAGRAM_HANDLE;
+  protected readonly instagramUrl = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
   protected readonly goal = signal<GoalId>('recomp');
 
   protected readonly result = computed(() => calculate(this.inputs()));

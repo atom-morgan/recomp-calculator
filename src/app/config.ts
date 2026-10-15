@@ -1,1 +1,2 @@
-export const CTA_URL = 'https://calendly.com/atom-morgan/1-on-1-personal-training';
+export const CTA_URL = 'https://forms.gle/UUjTARMvvCfrhto4A';
+export const INSTAGRAM_HANDLE = 'adamjmorgan';

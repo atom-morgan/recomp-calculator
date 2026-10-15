@@ -43,3 +43,7 @@
   background: var(--white); color: var(--ink); font-weight: 800; text-decoration: none;
 }
 .cta a:hover { background: var(--chalk); }
+.how + .cta { margin-top: 28px; }
+.follow { font-size: 0.9rem; color: var(--steel); text-align: center; margin: 20px 0 0; }
+.follow a { color: var(--ink); font-weight: 700; }
+.follow a:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
