@@ -3,17 +3,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InfoTip } from '../info-tip/info-tip';
 
 export interface SegmentOption<T> {
-  readonly value: T;
-  readonly label: string;
+  value: T;
+  label: string;
 }
 
 let nextId = 0;
 
-/**
- * A radio group styled as a segmented control, with an optional info tip on the label.
- * Works with reactive forms (formControlName / formControl) and uses native radios
- * for keyboard support.
- */
+// Radio group styled as a segmented control. Native radios give us keyboard support for free.
 @Component({
   selector: 'app-segmented-control',
   imports: [InfoTip],
@@ -50,13 +46,13 @@ let nextId = 0;
   `,
 })
 export class SegmentedControl<T> implements ControlValueAccessor {
-  readonly label = input.required<string>();
-  readonly hint = input<string>();
-  readonly options = input.required<readonly SegmentOption<T>[]>();
+  label = input.required<string>();
+  hint = input<string>();
+  options = input.required<SegmentOption<T>[]>();
 
-  protected readonly name = `segmented-${nextId++}`;
-  protected readonly value = signal<T | null>(null);
-  protected readonly disabled = signal(false);
+  protected name = `segmented-${nextId++}`;
+  protected value = signal<T | null>(null);
+  protected disabled = signal(false);
 
   private onChange: (value: T) => void = () => {};
   protected onTouched: () => void = () => {};
@@ -66,16 +62,16 @@ export class SegmentedControl<T> implements ControlValueAccessor {
     this.onChange(value);
   }
 
-  writeValue(value: T): void {
+  writeValue(value: T) {
     this.value.set(value);
   }
-  registerOnChange(fn: (value: T) => void): void {
+  registerOnChange(fn: (value: T) => void) {
     this.onChange = fn;
   }
-  registerOnTouched(fn: () => void): void {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean) {
     this.disabled.set(isDisabled);
   }
 }

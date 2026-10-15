@@ -2,11 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, input, signal }
 
 let nextId = 0;
 
-/**
- * A "?" button with a tooltip. Opens on hover and keyboard focus, and toggles on tap/click
- * so it works on touch screens. The bubble positions against the nearest positioned
- * ancestor (give the label row `position: relative`).
- */
+// "?" button with a tooltip. Hover and focus show it, click toggles it for touch screens.
 @Component({
   selector: 'app-info-tip',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,13 +21,13 @@ let nextId = 0;
   `,
 })
 export class InfoTip {
-  readonly text = input.required<string>();
+  text = input.required<string>();
 
-  protected readonly id = `info-tip-${nextId++}`;
-  protected readonly open = signal(false);
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  protected id = `info-tip-${nextId++}`;
+  protected open = signal(false);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  protected closeOnOutsideClick(event: Event): void {
+  protected closeOnOutsideClick(event: Event) {
     if (!this.host.nativeElement.contains(event.target as Node)) this.open.set(false);
   }
 }

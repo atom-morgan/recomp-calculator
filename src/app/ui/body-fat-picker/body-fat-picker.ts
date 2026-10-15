@@ -4,14 +4,10 @@ import { Sex } from '../../tdee';
 import { InfoTip } from '../info-tip/info-tip';
 import { BODY_FAT_RANGE, BODY_FAT_STOPS, BodyFatStop } from './body-fat-stops';
 
-/** How far a value sits outside a stop's range (0 when inside it). */
+// how far a value is outside a stop's range (0 if it's inside)
 const gap = (stop: BodyFatStop, value: number) =>
   value < stop.low ? stop.low - value : value > stop.high ? value - stop.high : 0;
 
-/**
- * Body fat slider plus a grid of reference photos, so people can pick a picture instead of
- * guessing a number. Works with reactive forms. Value is a percentage.
- */
 @Component({
   selector: 'app-body-fat-picker',
   imports: [InfoTip],
@@ -23,18 +19,15 @@ const gap = (stop: BodyFatStop, value: number) =>
   ],
 })
 export class BodyFatPicker implements ControlValueAccessor {
-  readonly sex = input.required<Sex>();
+  sex = input.required<Sex>();
 
-  protected readonly hint =
-    'Pick the picture closest to how you look now. A close guess is fine. This is a visual estimate, not a measurement.';
+  protected value = signal(25);
+  protected disabled = signal(false);
 
-  protected readonly value = signal(25);
-  protected readonly disabled = signal(false);
-
-  protected readonly min = computed(() => BODY_FAT_RANGE[this.sex()].min);
-  protected readonly max = computed(() => BODY_FAT_RANGE[this.sex()].max);
-  protected readonly stops = computed(() => BODY_FAT_STOPS[this.sex()]);
-  protected readonly nearest = computed(() =>
+  protected min = computed(() => BODY_FAT_RANGE[this.sex()].min);
+  protected max = computed(() => BODY_FAT_RANGE[this.sex()].max);
+  protected stops = computed(() => BODY_FAT_STOPS[this.sex()]);
+  protected nearest = computed(() =>
     this.stops().reduce((best, stop) =>
       gap(stop, this.value()) < gap(best, this.value()) ? stop : best,
     ),
@@ -43,30 +36,30 @@ export class BodyFatPicker implements ControlValueAccessor {
   private onChange: (value: number) => void = () => {};
   private onTouched: () => void = () => {};
 
-  protected photoSrc(stop: BodyFatStop): string {
+  protected photoSrc(stop: BodyFatStop) {
     return `body-fat/${this.sex()}-${stop.id}.png`;
   }
 
-  protected set(value: number): void {
+  protected set(value: number) {
     this.value.set(value);
     this.onChange(value);
     this.onTouched();
   }
 
-  protected onSlide(event: Event): void {
+  protected onSlide(event: Event) {
     this.set(+(event.target as HTMLInputElement).value);
   }
 
-  writeValue(value: number | null): void {
+  writeValue(value: number | null) {
     if (value !== null) this.value.set(value);
   }
-  registerOnChange(fn: (value: number) => void): void {
+  registerOnChange(fn: (value: number) => void) {
     this.onChange = fn;
   }
-  registerOnTouched(fn: () => void): void {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean) {
     this.disabled.set(isDisabled);
   }
 }

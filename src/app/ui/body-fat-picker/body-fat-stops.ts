@@ -1,25 +1,21 @@
 import { Sex } from '../../tdee';
 
 export interface BodyFatStop {
-  /** Used in the photo file name, e.g. "20-24" is male-20-24.jpg. */
-  readonly id: string;
-  readonly low: number;
-  readonly high: number;
-  /** The slider value this card sets when tapped. */
-  readonly value: number;
-  /** The range shown on the card. */
-  readonly range: string;
-  readonly description: string;
+  id: string; // used in the photo file name, e.g. male-20-24.png
+  low: number;
+  high: number;
+  value: number; // what the slider jumps to when the card is tapped
+  range: string;
+  description: string;
 }
 
-/** Slider bounds per sex. */
 export const BODY_FAT_RANGE: Record<Sex, { min: number; max: number }> = {
   male: { min: 4, max: 50 },
   female: { min: 12, max: 50 },
 };
 
-/** Nine reference cards per sex, shown as a 3 x 3 grid. Some ranges leave gaps, like most charts. */
-export const BODY_FAT_STOPS: Record<Sex, readonly BodyFatStop[]> = {
+// Same ranges as the reference charts, gaps included.
+export const BODY_FAT_STOPS: Record<Sex, BodyFatStop[]> = {
   male: [
     { id: '4-5', low: 4, high: 5, value: 5, range: '4 to 5%',
       description: 'Competition-stage leanness. Very hard to maintain.' },

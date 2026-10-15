@@ -9,7 +9,11 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <app-segmented-control label="Units" formControlName="units" [options]="unitOptions" />
-    <app-segmented-control label="Sex" [hint]="sexHint" formControlName="sex" [options]="sexOptions" />
+    <app-segmented-control
+      label="Sex"
+      formControlName="sex"
+      [options]="sexOptions"
+    />
 
     @let weight = form.controls.weight;
     <label class="field">
@@ -44,7 +48,12 @@
       </select>
     </label>
 
-    <app-segmented-control label="Age" [hint]="ageHint" formControlName="senior" [options]="ageOptions" />
+    <app-segmented-control
+      label="Age"
+      hint="At 60 and over, fat loss uses a slightly smaller calorie deficit and protein goes up a little, to help protect muscle."
+      formControlName="senior"
+      [options]="ageOptions"
+    />
 
     <button class="primary" type="submit">Calculate my calories</button>
   </form>

@@ -1,7 +1,3 @@
-/**
- * Calorie and protein math. Pure functions only, so it is trivial to test.
- * BMR uses Katch-McArdle, which runs on lean mass: age and sex don't change it.
- */
 export type Units = 'imperial' | 'metric';
 export type Sex = 'male' | 'female';
 export type GoalId = 'recomp' | 'fat' | 'muscle';
@@ -26,7 +22,6 @@ export interface Target {
 
 export interface Result {
   tdee: number;
-  bmr: number;
   targets: Target[];
 }
 
@@ -45,29 +40,28 @@ export const HOUR_OPTIONS = [
   { label: '7+ hours', hours: 8 },
 ] as const;
 
+// adjust is the change from maintenance (-0.1 means 10% under).
+// protein is grams per kg of lean mass.
 interface Goal {
   id: GoalId;
   label: string;
   blurb: string;
-  /** Change vs maintenance, e.g. -0.1 is 10% under. */
   adjust: number;
-  /** Gentler adjustment used for the 60+ group. */
   seniorAdjust: number;
-  /** Protein in grams per kg of lean mass. */
-  proteinPerKgLean: number;
+  protein: number;
 }
 
-const GOALS: readonly Goal[] = [
+const GOALS: Goal[] = [
   {
-    id: 'recomp', label: 'Standard recomp', adjust: -0.1, seniorAdjust: -0.1, proteinPerKgLean: 2.6,
+    id: 'recomp', label: 'Standard recomp', adjust: -0.1, seniorAdjust: -0.1, protein: 2.6,
     blurb: 'A small deficit with high protein and hard training. Fat comes down while muscle builds.',
   },
   {
-    id: 'fat', label: 'Fat loss focus', adjust: -0.2, seniorAdjust: -0.15, proteinPerKgLean: 2.8,
+    id: 'fat', label: 'Fat loss focus', adjust: -0.2, seniorAdjust: -0.15, protein: 2.8,
     blurb: 'A bigger deficit. Faster scale and waist change, with protein high enough to protect muscle.',
   },
   {
-    id: 'muscle', label: 'Muscle focus', adjust: 0.05, seniorAdjust: 0.05, proteinPerKgLean: 2.4,
+    id: 'muscle', label: 'Muscle focus', adjust: 0.05, seniorAdjust: 0.05, protein: 2.4,
     blurb: 'A slight surplus to push strength and size. Expect slower fat loss.',
   },
 ];
@@ -83,6 +77,7 @@ export function calculate(input: Inputs): Result {
   const kg = input.units === 'imperial' ? input.weight * LB_TO_KG : input.weight;
   const leanKg = kg * (1 - input.bodyFat / 100);
 
+  // Katch-McArdle, so only lean mass matters
   const bmr = 370 + 21.6 * leanKg;
   const tdee =
     bmr * STEP_OPTIONS[input.stepIdx].factor +
@@ -90,15 +85,15 @@ export function calculate(input: Inputs): Result {
 
   const targets = GOALS.map((goal): Target => {
     const adjust = input.senior ? goal.seniorAdjust : goal.adjust;
-    const proteinPerKg = goal.proteinPerKgLean + (input.senior ? SENIOR_PROTEIN_BONUS : 0);
+    const protein = (goal.protein + (input.senior ? SENIOR_PROTEIN_BONUS : 0)) * leanKg;
     return {
       id: goal.id,
       label: goal.label,
       blurb: goal.blurb,
       calories: Math.max(CALORIE_FLOOR[input.sex], roundTo(tdee * (1 + adjust), 10)),
-      protein: roundTo(proteinPerKg * leanKg, 5),
+      protein: roundTo(protein, 5),
     };
   });
 
-  return { tdee: roundTo(tdee, 10), bmr: roundTo(bmr, 10), targets };
+  return { tdee: roundTo(tdee, 10), targets };
 }

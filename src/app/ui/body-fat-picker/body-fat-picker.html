@@ -1,7 +1,9 @@
 <div class="top">
   <span class="lbl label-row">
     Body fat
-    <app-info-tip [text]="hint" />
+    <app-info-tip
+      text="Pick the picture closest to how you look now. A close guess is fine. This is a visual estimate, not a measurement."
+    />
   </span>
   <output class="value">{{ value() }}%</output>
 </div>
