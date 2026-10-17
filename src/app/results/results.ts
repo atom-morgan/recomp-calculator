@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { track } from '../analytics';
 import { CTA_URL, INSTAGRAM_HANDLE } from '../config';
 import { CALORIE_FLOOR, GOALS, GoalId, Inputs, calculate } from '../tdee';
 
@@ -49,4 +50,17 @@ export class Results {
       ? ''
       : ` (${pct(goal('fat').seniorAdjust)}% if you're 60 or over)`;
   protected readonly musclePct = pct(goal('muscle').adjust);
+
+  protected selectGoal(id: GoalId) {
+    this.goal.set(id);
+    track('select_goal', { goal: id });
+  }
+
+  protected trackApply() {
+    track('apply_click', { goal: this.active().id });
+  }
+
+  protected trackInstagram() {
+    track('instagram_click');
+  }
 }

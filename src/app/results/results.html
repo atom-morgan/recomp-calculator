@@ -17,7 +17,9 @@
     </div>
     <ul class="legend">
       @for (part of parts(); track part.id) {
-        <li><i [class]="part.id"></i>{{ part.label }} <b>{{ part.kcal | number }} kcal</b></li>
+        <li>
+          <i [class]="part.id"></i>{{ part.label }} <b>{{ part.kcal | number }} kcal</b>
+        </li>
       }
     </ul>
     <p class="caption">An estimate based on your lean mass, steps and workouts.</p>
@@ -29,7 +31,7 @@
         type="button"
         role="tab"
         [attr.aria-selected]="target.id === active().id"
-        (click)="goal.set(target.id)"
+        (click)="selectGoal(target.id)"
       >
         {{ target.label }}
       </button>
@@ -60,8 +62,8 @@
         comes down while hard training keeps building muscle.
       </li>
       <li>
-        <b>Fat loss focus:</b> about {{ fatPct }}% below maintenance{{ fatSeniorNote }}. Faster
-        fat loss, with higher protein to protect your muscle.
+        <b>Fat loss focus:</b> about {{ fatPct }}% below maintenance{{ fatSeniorNote }}. Faster fat
+        loss, with higher protein to protect your muscle.
       </li>
       <li>
         <b>Muscle focus:</b> about {{ musclePct }}% above maintenance. A slight surplus to support
@@ -99,11 +101,13 @@
       A calculator gives you the numbers. A plan tells you what to do with them. Apply for coaching
       and I'll build your training and calories around your goal.
     </p>
-    <a [href]="ctaUrl" target="_blank" rel="noopener">Apply for coaching</a>
+    <a [href]="ctaUrl" target="_blank" rel="noopener" (click)="trackApply()">Apply for coaching</a>
   </div>
 
   <p class="follow">
     Training tips and real client results on Instagram:
-    <a [href]="instagramUrl" target="_blank" rel="noopener">&#64;{{ instagramHandle }}</a>
+    <a [href]="instagramUrl" target="_blank" rel="noopener" (click)="trackInstagram()"
+      >&#64;{{ instagramHandle }}</a
+    >
   </p>
 </section>

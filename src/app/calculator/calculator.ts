@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { track } from '../analytics';
 import { Results } from '../results/results';
 import { HOUR_OPTIONS, Inputs, STEP_OPTIONS, Sex, Units } from '../tdee';
 import { BodyFatPicker } from '../ui/body-fat-picker/body-fat-picker';
@@ -71,6 +72,7 @@ export class Calculator {
     const { weight, ...rest } = this.form.getRawValue();
     if (weight === null) return;
     this.submitted.set({ ...rest, weight });
+    track('calculate');
 
     afterNextRender(() => this.results()?.nativeElement.scrollIntoView(), { injector: this.injector });
   }
