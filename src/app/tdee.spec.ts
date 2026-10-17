@@ -48,13 +48,14 @@ describe('calculate', () => {
     expect(calculate({ ...base, hourIdx: 0 }).breakdown.training).toBe(0);
   });
 
-  it('reports the adjustment applied to each target', () => {
-    expect(calculate(base).targets.map((t) => t.adjust)).toEqual([-0.1, -0.2, 0.05]);
-    expect(target({ ...base, senior: true }, 'fat').adjust).toBe(-0.15);
-  });
-
   it('never goes below the calorie floor', () => {
     const small: Inputs = { ...base, sex: 'female', weight: 90, bodyFat: 20, stepIdx: 0, hourIdx: 0 };
     expect(target(small, 'fat').calories).toBe(1200);
+  });
+
+  it('flags targets that were raised to the calorie floor', () => {
+    const small: Inputs = { ...base, sex: 'female', weight: 90, bodyFat: 20, stepIdx: 0, hourIdx: 0 };
+    expect(calculate(small).targets.map((t) => t.floored)).toEqual([true, true, false]);
+    expect(calculate(base).targets.some((t) => t.floored)).toBe(false);
   });
 });

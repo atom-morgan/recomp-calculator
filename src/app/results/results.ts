@@ -27,9 +27,18 @@ export class Results {
   protected readonly active = computed(
     () => this.result().targets.find((t) => t.id === this.goal()) ?? this.result().targets[0],
   );
+  // Worked out from the numbers on screen rather than the goal's percentage,
+  // so it stays true when the calorie floor lifts the target.
   protected readonly offset = computed(() => {
-    const { adjust } = this.active();
-    return `${pct(adjust)}% ${adjust < 0 ? 'below' : 'above'} maintenance`;
+    const { calories, floored } = this.active();
+    const change = calories / this.result().tdee - 1;
+    const where =
+      pct(change) === 0
+        ? 'At maintenance'
+        : `${pct(change)}% ${change < 0 ? 'below' : 'above'} maintenance`;
+    if (!floored) return where;
+    const floor = CALORIE_FLOOR[this.inputs().sex].toLocaleString('en-US');
+    return `${where}, at the ${floor} kcal daily minimum`;
   });
 
   protected readonly parts = computed(() => {

@@ -18,7 +18,7 @@ export interface Target {
   blurb: string;
   calories: number;
   protein: number;
-  adjust: number; // the change from maintenance that was applied
+  floored: boolean; // raised to the calorie floor
 }
 
 // kcal per day; the three parts add up to the rounded TDEE
@@ -110,13 +110,15 @@ export function calculate(input: Inputs): Result {
   const targets = GOALS.map((goal): Target => {
     const adjust = input.senior ? goal.seniorAdjust : goal.adjust;
     const protein = (goal.protein + (input.senior ? SENIOR_PROTEIN_BONUS : 0)) * leanKg;
+    const calories = roundTo(tdee * (1 + adjust), 10);
+    const floor = CALORIE_FLOOR[input.sex];
     return {
       id: goal.id,
       label: goal.label,
       blurb: goal.blurb,
-      calories: Math.max(CALORIE_FLOOR[input.sex], roundTo(tdee * (1 + adjust), 10)),
+      calories: Math.max(floor, calories),
       protein: roundTo(protein, 5),
-      adjust,
+      floored: calories < floor,
     };
   });
 
