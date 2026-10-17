@@ -75,7 +75,7 @@ export const GOALS: readonly Goal[] = [
   },
 ];
 
-const LB_TO_KG = 0.45359237;
+export const LB_TO_KG = 0.45359237;
 const KCAL_PER_TRAINING_HOUR = 300;
 const SENIOR_PROTEIN_BONUS = 0.3;
 export const CALORIE_FLOOR: Record<Sex, number> = { male: 1500, female: 1200 };

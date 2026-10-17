@@ -5,7 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { track } from '../analytics';
 import { Results } from '../results/results';
-import { HOUR_OPTIONS, Inputs, STEP_OPTIONS, Sex, Units } from '../tdee';
+import { HOUR_OPTIONS, Inputs, LB_TO_KG, STEP_OPTIONS, Sex, Units } from '../tdee';
 import { BodyFatPicker } from '../ui/body-fat-picker/body-fat-picker';
 import { BODY_FAT_RANGE } from '../ui/body-fat-picker/body-fat-stops';
 import { SegmentOption, SegmentedControl } from '../ui/segmented-control/segmented-control';
@@ -62,6 +62,25 @@ export class Calculator {
       const { min, max } = BODY_FAT_RANGE[sex];
       const bodyFat = this.form.controls.bodyFat;
       bodyFat.setValue(Math.min(max, Math.max(min, bodyFat.value)));
+    });
+
+    // Convert the weight when units change, so 175 lb doesn't become 175 kg. Always convert
+    // from what the user last typed, so switching lb -> kg -> lb gives back the same number.
+    const { units, weight } = this.form.controls;
+    let typed = { weight: weight.value, units: units.value };
+    weight.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      typed = { weight: value, units: units.value };
+    });
+    units.valueChanges.pipe(takeUntilDestroyed()).subscribe((to) => {
+      if (typed.weight === null) return;
+      const converted =
+        to === typed.units
+          ? typed.weight
+          : to === 'metric'
+            ? Math.round(typed.weight * LB_TO_KG * 10) / 10
+            : Math.round(typed.weight / LB_TO_KG);
+      // emitEvent: false so the converted number isn't mistaken for a new typed value
+      weight.setValue(converted, { emitEvent: false });
     });
   }
 
