@@ -5,3 +5,9 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# serve public/privacy.html at /privacy
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200

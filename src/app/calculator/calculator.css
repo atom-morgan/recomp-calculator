@@ -21,3 +21,6 @@ input:focus-visible, select:focus-visible, .primary:focus-visible { outline: 3px
   padding: 16px; border: 0; border-radius: 4px; background: var(--cobalt); color: var(--white); cursor: pointer;
 }
 .primary:hover { background: #0f2fd0; }
+footer { margin-top: 48px; font-size: 0.85rem; color: var(--steel); text-align: center; }
+footer a { color: inherit; }
+footer a:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
